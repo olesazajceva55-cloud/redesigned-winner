@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Валентинка 💗</title>
+
+<style>
+:root{
+  --pink:#ff5fa2;
+  --pink2:#ffd1e6;
+  --text:#6b0f3a;
+}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(circle at 20% 20%, var(--pink2), transparent 55%),
+    radial-gradient(circle at 80% 25%, #ffb3d1, transparent 55%),
+    linear-gradient(135deg,#fff0f7,#ffe6f1);
+  overflow:hidden;
+}
+
+.card{
+  background:rgba(255,255,255,.82);
+  padding:24px 18px 26px;
+  border-radius:22px;
+  text-align:center;
+  width:min(540px,92vw);
+  box-shadow:0 20px 55px rgba(255,95,162,.32);
+  border:2px solid rgba(255,95,162,.2);
+  backdrop-filter: blur(10px);
+  z-index:2;
+}
+
+.gif-wrap{
+  width:220px;height:220px;margin:0 auto 10px;
+  border-radius:18px;overflow:hidden;
+  border:2px solid rgba(255,95,162,.2);
+}
+.gif-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+
+h1{
+  margin:12px 0 8px;
+  color:var(--text);
+  font-size:clamp(20px,3.6vw,28px);
+  line-height:1.2;
+}
+
+.sub{
+  margin:0 0 14px;
+  color:#8a2a54;
+  font-weight:600;
+  opacity:.9;
+}
+
+.buttons{
+  margin-top:10px;
+  position:relative;
+  height:52px; /* оставляем только кнопку "Да" внутри карточки */
+}
+
+.btn{
+  padding:12px 20px;
+  border-radius:999px;
+  border:none;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 12px 26px rgba(255,95,162,.22);
+  transition: transform .12s ease, filter .12s ease;
+  user-select:none;
+  touch-action: manipulation;
+}
+.btn:active{transform: scale(.98);}
+
+.yes{
+  background:linear-gradient(135deg,#ff4fa0,#ff8ac4);
+  color:white;
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+/* КНОПКА НЕТ — FIXED, чтобы не пропадала и всегда была в пределах экрана */
+.no{
+  position:fixed;
+  left:50%;
+  top: calc(50% + 180px);
+  transform: translateX(-50%);
+  background:white;
+  color:var(--pink);
+  border:2px solid rgba(255,95,162,.55);
+  z-index:2500;
+  --s: 1;
+}
+
+/* плач + тряска */
+.cry{
+  animation:shake .25s ease-in-out infinite;
+}
+.cry::after{
+  content:"💧💧";
+  position:absolute;
+  left:50%;
+  top:-18px;
+  transform:translateX(-50%);
+  font-size:16px;
+  opacity:.95;
+  animation:drip .6s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes drip{
+  from{ transform:translateX(-50%) translateY(0); opacity:.95;}
+  to{ transform:translateX(-50%) translateY(10px); opacity:.25;}
+}
+@keyframes shake{
+  0%{transform: translateX(-50%) translate(0,0) scale(var(--s,1));}
+  25%{transform: translateX(-50%) translate(2px,-1px) scale(var(--s,1));}
+  50%{transform: translateX(-50%) translate(-2px,1px) scale(var(--s,1));}
+  75%{transform: translateX(-50%) translate(2px,1px) scale(var(--s,1));}
+  100%{transform: translateX(-50%) translate(0,0) scale(var(--s,1));}
+}
+
+/* фоновые сердечки */
+.heart{
+  position:absolute;
+  font-size:18px;
+  opacity:.22;
+  animation: floatUp 8s linear infinite;
+  user-select:none;
+  pointer-events:none;
+  z-index:1;
+}
+@keyframes floatUp{
+  from{ transform: translateY(30px); }
+  to{ transform: translateY(-110vh); }
+}
+
+/* салют */
+.confetti{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform: translate(-50%,-50%);
+  font-size:20px;
+  pointer-events:none;
+  user-select:none;
+  z-index:2000;
+}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,.55);
+  opacity:0;
+  pointer-events:none;
+  transition: opacity .35s ease;
+  display:grid;
+  place-items:center;
+  z-index:3000;
+}
+.modal-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal{
+  width:min(520px, 92vw);
+  background: rgba(255,255,255,.92);
+  border-radius:24px;
+  border:2px solid rgba(255,95,162,.22);
+  box-shadow: 0 24px 70px rgba(0,0,0,.25);
+  padding:18px 16px 16px;
+  text-align:center;
+  position:relative;
+}
+
+.modal h2{
+  margin:6px 0 10px;
+  color:#b3004b;
+  font-size:clamp(20px, 3.8vw, 28px);
+}
+
+.modal p{
+  margin:0 0 14px;
+  color:#6b0f3a;
+  font-weight:650;
+  line-height:1.35;
+}
+
+.modal .meta{
+  background: rgba(255,95,162,.10);
+  border:1px solid rgba(255,95,162,.20);
+  border-radius:16px;
+  padding:10px 12px;
+  margin: 10px 0 14px;
+  color:#7b1847;
+  font-weight:800;
+}
+
+.modal-actions{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.modal .open{
+  background: linear-gradient(135deg,#ff4fa0,#ff8ac4);
+  color:#fff;
+}
+.modal .close{
+  background:#fff;
+  color:#ff4fa0;
+  border:2px solid rgba(255,95,162,.45);
+}
+
+.modal button{
+  padding:12px 18px;
+  border-radius:999px;
+  font-weight:900;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 12px 26px rgba(255,95,162,.22);
+}
+.modal button:active{transform: scale(.98);}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <div class="gif-wrap">
+    <!-- Поменяй GIF тут (ссылка или love.gif рядом с файлом) -->
+    <img src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" alt="gif">
+  </div>
+
+  <h1>Игилин, пойдёшь со мной на свидание на 14 февраля? 💘</h1>
+  <div class="sub">Нажми «Да» 😌</div>
+
+  <div class="buttons">
+    <button class="btn yes" id="yes">Да 💗</button>
+  </div>
+</div>
+
+<button class="btn no" id="no">Нет 🙈</button>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Спасибо, игилинааа!) 💖</h2>
+    <p>
+      Я люблю тебя 🥺💞<br>
+      Ты сделала мой день самым лучшим.
+    </p>
+    <div class="meta">📅 14 февраля • ⏰ 18:00 • около твоего падика) </div>
+    <p style="margin-top:-4px;">
+      Буду ждать тебя красивую 😌✨<br>
+      Прогуляемся в этот вечер)
+    </p>
+    <div class="modal-actions">
+      <button class="open" id="openRestaurant">Открыть место в 2GIS</button>
+      <button class="close" id="closeModal">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const no = document.getElementById("no");
+const yes = document.getElementById("yes");
+const modalOverlay = document.getElementById("modalOverlay");
+const openRestaurant = document.getElementById("openRestaurant");
+const closeModal = document.getElementById("closeModal");
+
+const pannoLink ="https://2gis.ru/almetevsk/geo/15200284397539650/52.313684,54.911071";
+
+const noTexts = ["ТОЧНО НЕТ? 😳","ТОЧНО ТОЧНО??? 😰","я щас заплачу 😭"];
+let noCount = 0;
+let yesScale = 1;
+let noScale = 1;
+
+function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+
+// Гарантия: кнопка "Нет" НИКОГДА не выйдет за границы экрана
+function moveNoWithinViewport(){
+  const padding = 12;
+
+  // актуальные размеры
+  const rect = no.getBoundingClientRect();
+  const maxX = window.innerWidth - rect.width - padding;
+  const maxY = window.innerHeight - rect.height - padding;
+
+  // если экран слишком маленький — просто ставим в центр
+  if (maxX <= padding || maxY <= padding) {
+    no.style.left = "50%";
+    no.style.top = "75%";
+    no.style.transform = "translateX(-50%)";
+    return;
+  }
+
+  const x = padding + Math.random() * (maxX - padding);
+  const y = padding + Math.random() * (maxY - padding);
+
+  no.style.left = x + "px";
+  no.style.top  = y + "px";
+  no.style.transform = "translateX(0)";
+}
+
+function applyScales(){
+  yes.style.transform = `translateX(-50%) scale(${yesScale})`;
+  no.style.setProperty("--s", noScale);
+  if (!no.classList.contains("cry")) {
+    no.style.transform = `scale(${noScale})`;
+  }
+}
+
+/* фоновые сердечки */
+function spawnHearts() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.textContent = ["💗","💖","💘","💕","💞"][Math.floor(Math.random()*5)];
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.top = (90 + Math.random()*15) + "vh";
+  heart.style.animationDuration = (6 + Math.random()*6) + "s";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 12000);
+}
+setInterval(spawnHearts, 450);
+
+/* сердечный салют */
+function heartConfettiBurst(count = 48) {
+  const hearts = ["💗","💖","💘","💕","💞"];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 230;
+    const x = Math.cos(angle) * dist;
+    const y = Math.sin(angle) * dist;
+    const rotate = (Math.random() * 240 - 120);
+
+    el.style.left = "50%";
+    el.style.top  = "50%";
+    el.style.opacity = "1";
+
+    document.body.appendChild(el);
+
+    el.animate([
+      { transform: `translate(-50%,-50%) translate(0px,0px) rotate(0deg)`, opacity: 1 },
+      { transform: `translate(-50%,-50%) translate(${x}px, ${y}px) rotate(${rotate}deg)`, opacity: 0 }
+    ], {
+      duration: 900 + Math.random() * 500,
+      easing: "cubic-bezier(.2,.8,.2,1)",
+      fill: "forwards"
+    });
+
+    setTimeout(() => el.remove(), 1600);
+  }
+}
+
+function openModal(){
+  modalOverlay.classList.add("show");
+  modalOverlay.setAttribute("aria-hidden","false");
+}
+function closeModalFn(){
+  modalOverlay.classList.remove("show");
+  modalOverlay.setAttribute("aria-hidden","true");
+}
+
+no.addEventListener("click", () => {
+  const idx = Math.min(noCount, noTexts.length - 1);
+  no.textContent = noTexts[idx];
+  noCount++;
+
+  // Да растёт, Нет уменьшается
+  yesScale = clamp(yesScale + 0.12, 1, 1.95);
+  noScale  = clamp(noScale  - 0.08, 0.55, 1);
+
+  if (noCount >= 3) no.classList.add("cry");
+
+  applyScales();
+  moveNoWithinViewport();
+});
+
+no.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  no.click();
+}, { passive:false });
+
+// Если меняется размер окна — подправим кнопку, чтобы оставалась на экране
+window.addEventListener("resize", () => {
+  // если она уже "убежала" (transform = translateX(0)), то держим в рамках
+  const t = getComputedStyle(no).transform;
+  if (t && t !== "none") {
+    moveNoWithinViewport();
+  }
+});
+
+yes.addEventListener("click", () => {
+  heartConfettiBurst(52);
+  openModal();
+});
+
+openRestaurant.addEventListener("click", () => {
+  window.open(pannoLink, "_blank");
+});
+closeModal.addEventListener("click", closeModalFn);
+modalOverlay.addEventListener("click", (e) => { if (e.target === modalOverlay) closeModalFn(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && modalOverlay.classList.contains("show")) closeModalFn(); });
+</script>
+
+</body>
+</html>
